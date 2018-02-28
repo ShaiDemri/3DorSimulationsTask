@@ -75,16 +75,31 @@ List of employees, by level.
     /* Routes the call to an available employee, or saves in a queue if no employee available. */
     public void dispatchCall(Call call) {
          /* Try to route the call to an employee with minimal rank. */
-        Employee emp = getHandlerForCall(call);
-        if (emp != null) {
+        Employee emp;
+        if (call.getRank() != Manager.getInstance().rank) {//if supporters can handle this call:
+            emp = getHandlerForCall(call);
+            if (emp != null) {
+                emp.receiveCall(call);
+                call.setHandler(emp);
+            } else {
+             /* Place the call into corresponding call queue according to its rank. */
+                call.reply("Please wait for free employee to reply");
+                callQueues.get(call.getRank().getValue()).add(call);
+            }
+        }else{//Manger have to handle this call:
+            emp = getHandlerForCall(call);
+            if(emp!= null){//Manger is free to handle this call:
             emp.receiveCall(call);
             call.setHandler(emp);
-        } else {
-             /* Place the call into corresponding call queue according to its rank. */
-            call.reply("Please wait for free employee to reply");
-            callQueues.get(call.getRank().getValue()).add(call);
+            }else{
+                call.reply("Manger is not available right now");
+                callQueues.get(call.getRank().getValue()).add(call);
+            }
+
         }
+
     }
+
 
     /* An employee got free. Look for a waiting call that employee
     can serve. Return true if we assigned a call, false otherwise. */
