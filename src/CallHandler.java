@@ -20,7 +20,7 @@ List of employees, by level.
  /* queues for each call's rank */
     List<List<Call>> callQueues;
 
-    protected CallHandler() {
+    private CallHandler() {
         employeeLevels = new ArrayList<List<Employee>>(LEVELS);//arrayList of all of the emp.
         callQueues = new ArrayList<List<Call>>(LEVELS);//arrayList of the waiting calls
 
@@ -41,7 +41,7 @@ List of employees, by level.
 
         // Create managers.
         ArrayList<Employee> managers = new ArrayList<Employee>(NUM_MANAGERS);
-        managers.add(new Manager());
+        managers.add(Manager.getInstance());
         employeeLevels.add(managers);
     }
 
