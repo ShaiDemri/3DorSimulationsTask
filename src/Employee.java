@@ -19,7 +19,7 @@ public abstract class Employee {
     public void escalateAndReassign() {
         if (currentCall != null) {
 			/* escalate call */
-            currentCall.incrementRank();
+            currentCall.escalateRank();
             CallHandler.getInstance().dispatchCall(currentCall);
 
 			/* free the employee */

@@ -3,46 +3,46 @@ import java.util.List;
 
 public class CallHandler {
     private static CallHandler instance;
-    private final int LEVELS = 3;
+    private final int RANKS = 3;
 
     private final int NUM_LEVEL_ONE_SUPPORTER = 5;
     private final int NUM_LEVEL_TWO_SUPPORTER = 2;
     private final int NUM_MANAGERS = 1;
 
 /*
-List of employees, by level.
-* employeeLevels[0] = levelOneSupporter
-* employeeLevels[l] = levelTwoSupporter
-* employeeLevels[2] = managers
+List of employees, by ranks.
+* employeeRanks[0] = levelOneSupporter
+* employeeRanks[l] = levelTwoSupporter
+* employeeRanks[2] = managers
 */
-    List<List<Employee>> employeeLevels;
+    List<List<Employee>> employeeRanks;
 
  /* queues for each call's rank */
     List<List<Call>> callQueues;
 
     private CallHandler() {
-        employeeLevels = new ArrayList<List<Employee>>(LEVELS);//arrayList of all of the emp.
-        callQueues = new ArrayList<List<Call>>(LEVELS);//arrayList of the waiting calls
+        employeeRanks = new ArrayList<List<Employee>>(RANKS);//arrayList of all of the emp.
+        callQueues = new ArrayList<List<Call>>(RANKS);//arrayList of the waiting calls
 
         // Create levelOneSupporter.
         ArrayList<Employee> levelOneSupporter = new ArrayList<Employee>(NUM_LEVEL_ONE_SUPPORTER);
         for (int k = 0; k < NUM_LEVEL_ONE_SUPPORTER - 1; k++) {
             levelOneSupporter.add(new LevelOneSupporter());
         }
-        employeeLevels.add(levelOneSupporter);
+        employeeRanks.add(levelOneSupporter);
 
         // Create levelTwoSupporter.
         ArrayList<Employee> levelTwoSupporter = new ArrayList<Employee>(NUM_LEVEL_TWO_SUPPORTER);
         for (int k = 0; k < NUM_LEVEL_TWO_SUPPORTER - 1; k++) {
             levelTwoSupporter.add(new LevelTwoSupporter());
         }
-        employeeLevels.add(levelTwoSupporter);
+        employeeRanks.add(levelTwoSupporter);
 
 
         // Create managers.
         ArrayList<Employee> managers = new ArrayList<Employee>(NUM_MANAGERS);
         managers.add(Manager.getInstance());
-        employeeLevels.add(managers);
+        employeeRanks.add(managers);
     }
 
     public static CallHandler getInstance() {
@@ -52,10 +52,10 @@ List of employees, by level.
         return instance;
     }
 
-    /* Gets the first available employee who can handle this call*/
+    /* Find and retrieve the lowest possible Rank of employee who can handle this @param call*/
     public Employee getHandlerForCall(Call call) {
-        for (int level = call.getRank().getValue(); level < LEVELS - 1; level++) {
-            List<Employee> employeeLevel = employeeLevels.get(level);
+        for (int level = call.getRank().getValue(); level < RANKS - 1; level++) {
+            List<Employee> employeeLevel = employeeRanks.get(level);
             for (Employee emp : employeeLevel) {
                 if (emp.isFree()) {
                     return emp;
@@ -65,7 +65,6 @@ List of employees, by level.
         return null;
     }
 
-    /* Routes the call to an available employee, or saves in a queue if no employee available. */
     public void dispatchCall(Caller caller) {
         Call call = new Call(caller);
         dispatchCall(call);
@@ -83,7 +82,7 @@ List of employees, by level.
                 call.setHandler(emp);
             } else {
              /* Place the call into corresponding call queue according to its rank. */
-                call.reply("Please wait for free employee to reply");
+                call.answer("Please wait for free employee to answer");
                 callQueues.get(call.getRank().getValue()).add(call);
             }
         }else{//Manger have to handle this call:
@@ -92,7 +91,7 @@ List of employees, by level.
             emp.receiveCall(call);
             call.setHandler(emp);
             }else{
-                call.reply("Manger is not available right now");
+                call.answer("Manger is not available right now");
                 callQueues.get(call.getRank().getValue()).add(call);
             }
 

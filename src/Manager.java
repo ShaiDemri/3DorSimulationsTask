@@ -7,9 +7,12 @@ public class Manager extends Employee {
 
     public static Manager getInstance() {
         if (instance == null) {
-            instance = new Manager ();
+            instance = new Manager();
         }
         return instance;
     }
 
+    public CallHandler getCallHandler() {
+        return CallHandler.getInstance();
+    }
 }
